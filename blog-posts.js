@@ -12,6 +12,7 @@ const {BlogPosts} = require('./postModels')
 BlogPosts.create('homemade bread', 'heres the esp', '11/10/11')
 BlogPosts.create('canned fruit', 'pringles prison rules-popTheTop', '11/10/11')
 BlogPosts.create('XC-ski brewing kit', 'cross-country ski-brew skidoos', '11/10/11')
+BlogPosts.create('Tilde Manny', 'HeresHammy surprise', 'The other Guys did', '04/JANNY/29teen')
 
 router.get('/', (req,res) => {
     res.json(BlogPosts.get())
@@ -23,7 +24,8 @@ router.post('/', jsonParser, (req, res) => {
         const field = requiredFields[i];
     if(!(field in req.body)) {
         console.log('not enough stuff to post!')}
-    } res.json(BlogPosts.create(req.body))
+    } BlogPosts.create(req.body.title, req.body.content, req.body.author, req.body.publishDate)
+    res.status(201).end()
 })
 
 router.put('/:id', jsonParser, (req, res) => {
