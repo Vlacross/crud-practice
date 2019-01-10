@@ -54,19 +54,43 @@ describe('blog-post http routes', function() {
             return chai.request(app)
             .get('/blog-posts')
             .then(function(res) {
-                /*validate th existence of the post we made in the blog db */
+                /*validate the existence of the post we made in the blog db */
                 const matcher = res.body.filter(post => post.title === practicePost.title)
+                // (could write conditional based on whether more than one post has same title)assert.lengthOf(matcher, 1)
                 expect(matcher[0]).to.be.an('object')
-                
-                
-                 res.body.forEach(function(post) {
-                     if(post.title === practicePost.title)
-                     assert.propertyVal(post, 'content', practicePost.content)
-                 })
-                
-               
-              
+                assert.propertyVal(matcher[0], 'content', practicePost.content)
+    
+                //  res.body.forEach(function(post) {
+                //      if(post.title === practicePost.title)
+                //      assert.propertyVal(post, 'content', practicePost.content)
+                //  })
             })
+        })
+    })
+
+    it('should UPDATE existing post', function() {
+
+        return chai.request(app)
+        .get('/blog-posts')
+        .then(function(res) {
+            expect(res).to.have.status(200)
+            assert.isNotEmpty(res.body)
+            const target = res.body[0].id;
+            
+            return chai.request(app)
+            .put(`/blog-posts/${target}`)
+            .send({
+                "id": `${target}`,
+                "title": "tanning in a Jif Jar ",
+                "content": "Creamy skin paste",
+                "author": "Willy Skinner",
+                "publishDate": 1547085051036
+            })
+            .then(function(res) {
+                expect(res).to.have.status(204)
+            })
+            
+
         })
     })
 
