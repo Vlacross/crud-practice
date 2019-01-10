@@ -101,21 +101,22 @@ describe('blog-post http routes', function() {
             const target = res.body[0].id;
             
             /*send update with new material using test 'id' */
-            return chai.request(app)
-            .put(`/blog-posts/${target}`)
-            .send({
+            const updateData = {
                 "id": `${target}`,
                 "title": "Scrumptious Dumpsterous Lamb Bars",
                 "content": "Offer Rings Offerings",
                 "author": "Don't Eat Friends",
                 "publishDate": 'twenty-fours&&twenty-sevens'
-            })
+            };
+            return chai.request(app)
+            .put(`/blog-posts/${target}`)
+            .send(updateData)
             .then(function(res) {
                 expect(res).to.have.status(204)
                 
                 /*get list to check that id was updated */
                 return chai.request(app)
-                .get('/blog-posts')
+                .get(`/blog-posts/${target}`)
                 .then(function(res) {
                     
                 })
@@ -123,7 +124,33 @@ describe('blog-post http routes', function() {
             
 
         })
-    })
+    });
+
+    it('should DELETE post', function() {
+
+        /*get list to obtain 'id' to test */
+        return chai.request(app)
+        .get('/blog-posts')
+        .then(function(res) {
+            expect(res).to.have.status(200)
+            assert.isNotEmpty(res.body)
+            const target = res.body[0].id;
+
+            return chai.request(app)
+            .delete(`/blog-posts/${target}`)
+            .then(function(res) {
+
+                return chai.request(app)
+                .get('/blog-posts')
+                .then(function(res) {
+                    
+                    var search = res.body.filter(post => post.id === `${target}`)
+                    expect(search).be.a('array')
+                    assert.isEmpty(search)
+                })
+            })
+        });
+    });
 
 
 })

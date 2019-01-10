@@ -59,6 +59,6 @@ router.put('/:id', jsonParser, (req, res) => {
 router.delete('/:id', jsonParser, (req, res) => {
     BlogPosts.delete(req.params.id)
     console.log(`${req.params.title} deleted!`)
-    res.send(204).end()
+    res.status(204).end()
 })
 module.exports = router;
