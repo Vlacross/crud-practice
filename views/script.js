@@ -2,8 +2,9 @@
 
 function showPosts(){
     console.log('prefetch')
-   fetch('/postStore')
-   .then(res => console.log(res))
+   fetch('/blog-posts', {method:  "get"})
+   .then(res => res.json())
+   .then(resj => console.log(resj))
 }
 
 
