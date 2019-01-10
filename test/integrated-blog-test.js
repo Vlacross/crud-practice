@@ -33,6 +33,23 @@ describe('blog-post http routes', function() {
         })
     })
 
+    it('should return single blog post when supplied with post id', function() {
+
+        return chai.request(app)
+        .get('/blog-posts')
+        .then(function(res) {
+            const testTarget = res.body[0].id;
+
+            return chai.request(app)
+            .get(`/blog-posts/${testTarget}`)
+            .then(function(res) {
+                expect(res).to.have.status(200)
+                expect(res.body).to.be.an('object');
+                expect(res.body.id).to.equal(testTarget);
+            })
+        })
+    })
+
 
     it('should create new blog POST', function() {
 
@@ -48,15 +65,20 @@ describe('blog-post http routes', function() {
         .post('/blog-posts')
         .send(practicePost)
         .then(function(res) {
+
             /*make sure our post routes returns proper status */
             expect(res).to.have.status(201)
+
             /*make GET req to obtain updated list(after POST) */
             return chai.request(app)
             .get('/blog-posts')
             .then(function(res) {
+
                 /*validate the existence of the post we made in the blog db */
                 const matcher = res.body.filter(post => post.title === practicePost.title)
-                // (could write conditional based on whether more than one post has same title)assert.lengthOf(matcher, 1)
+
+                // ([IDEA]could write conditional based on whether more than one post has same title)assert.lengthOf(matcher, 1)
+
                 expect(matcher[0]).to.be.an('object')
                 assert.propertyVal(matcher[0], 'content', practicePost.content)
     
@@ -70,6 +92,7 @@ describe('blog-post http routes', function() {
 
     it('should UPDATE existing post', function() {
 
+        /*get list to obtain 'id' to test */
         return chai.request(app)
         .get('/blog-posts')
         .then(function(res) {
@@ -77,17 +100,25 @@ describe('blog-post http routes', function() {
             assert.isNotEmpty(res.body)
             const target = res.body[0].id;
             
+            /*send update with new material using test 'id' */
             return chai.request(app)
             .put(`/blog-posts/${target}`)
             .send({
                 "id": `${target}`,
-                "title": "tanning in a Jif Jar ",
-                "content": "Creamy skin paste",
-                "author": "Willy Skinner",
-                "publishDate": 1547085051036
+                "title": "Scrumptious Dumpsterous Lamb Bars",
+                "content": "Offer Rings Offerings",
+                "author": "Don't Eat Friends",
+                "publishDate": 'twenty-fours&&twenty-sevens'
             })
             .then(function(res) {
                 expect(res).to.have.status(204)
+                
+                /*get list to check that id was updated */
+                return chai.request(app)
+                .get('/blog-posts')
+                .then(function(res) {
+                    
+                })
             })
             
 
