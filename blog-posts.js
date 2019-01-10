@@ -23,9 +23,14 @@ router.post('/', jsonParser, (req, res) => {
     for(let i = 0; i < requiredFields.length; i++){
         const field = requiredFields[i];
     if(!(field in req.body)) {
-        console.log('not enough stuff to post!')}
-    } BlogPosts.create(req.body.title, req.body.content, req.body.author, req.body.publishDate)
-    res.status(201).end()
+        const error = 'not enough stuff to post!';
+        console.log(error);
+        throw error;
+      }
+    }
+    BlogPosts.create(req.body.title, req.body.content, req.body.author, req.body.publishDate)
+    res.status(201).end();
+
 })
 
 router.put('/:id', jsonParser, (req, res) => {

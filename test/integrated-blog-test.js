@@ -1,6 +1,7 @@
 const chai = require('chai');
 const chaiHTTP = require('chai-http');
 const expect = chai.expect;
+const assert = require('chai').assert;
 
 
 chai.use(chaiHTTP);
@@ -32,7 +33,42 @@ describe('blog-post http routes', function() {
         })
     })
 
-    
+
+    it('should create new blog POST', function() {
+
+        /*make content to send as test */
+        const practicePost = {
+            "title": "tanning in a Jif Jar ",
+            "content": "Creamy skin paste",
+            "author": "Willy Skinner",
+            "publishDate": 1547085051036
+        }
+
+        return chai.request(app)
+        .post('/blog-posts')
+        .send(practicePost)
+        .then(function(res) {
+            /*make sure our post routes returns proper status */
+            expect(res).to.have.status(201)
+            /*make GET req to obtain updated list(after POST) */
+            return chai.request(app)
+            .get('/blog-posts')
+            .then(function(res) {
+                /*validate th existence of the post we made in the blog db */
+                const matcher = res.body.filter(post => post.title === practicePost.title)
+                expect(matcher[0]).to.be.an('object')
+                
+                
+                 res.body.forEach(function(post) {
+                     if(post.title === practicePost.title)
+                     assert.propertyVal(post, 'content', practicePost.content)
+                 })
+                
+               
+              
+            })
+        })
+    })
 
 
 })
