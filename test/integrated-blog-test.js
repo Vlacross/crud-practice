@@ -22,6 +22,13 @@ describe('blog-post http routes', function() {
         .get('/blog-posts')
         .then(function(res) {
             expect(res).to.have.status(200);
+            expect(res).to.be.an('object');
+            expect(res.body).to.be.an('array');
+            res.body.forEach(function(post){
+                expect(post).to.be.an('object')
+                expect(post).to.include.keys(['id', 'author', 'title', 'content', 'publishDate'])
+            })
+            
         })
     })
 
